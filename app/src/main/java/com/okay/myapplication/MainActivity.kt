@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
+import com.okay.myapplication.utils.SPUtils
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -17,22 +18,36 @@ class MainActivity : AppCompatActivity() {
     private val TAG = "zyl"
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        if (SPUtils.getString(this, null, "theme") == "dayTheme") {
+            setTheme(R.style.nightTheme)
+        } else {
+            setTheme(R.style.dayTheme)
+        }
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         viewpager2.adapter = RecycleViewAdapter()
 
-        viewpager2.registerOnPageChangeCallback(object :ViewPager2.OnPageChangeCallback(){
+        viewpager2.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
 
             override fun onPageSelected(position: Int) {
-                Log.d(TAG,"onPageSelected--position = $position")
+                Log.d(TAG, "onPageSelected--position = $position")
             }
 
         })
 
-        TabLayoutMediator(tabLayout,viewpager2){tab, position ->
+        TabLayoutMediator(tabLayout, viewpager2) { tab, position ->
             tab.text = "position$position"
         }.attach()
+
+        btnTheme.setOnClickListener {
+            if (SPUtils.getString(this, null, "theme") == "dayTheme") {
+                SPUtils.put(this, null, "theme","nightTheme")
+            } else {
+                SPUtils.put(this, null, "theme","dayTheme")
+            }
+            recreate()
+        }
     }
 
 
