@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.tabs.TabLayoutMediator
+import com.okay.myapplication.utils.ContextHelper
+import com.okay.myapplication.utils.ResUtil
 import com.okay.myapplication.utils.SPUtils
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -19,9 +21,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         if (SPUtils.getString(this, null, "theme") == "dayTheme") {
-            setTheme(R.style.nightTheme)
-        } else {
+            //默認是白天主題
             setTheme(R.style.dayTheme)
+        } else {
+//否则是晚上主題，這裡晚上主題我們就去加載我們晚上主題apk里的資源
+            val resourceId = ResUtil.getResourceId(
+                ContextHelper.getPackageContext(this, "com.okay.themeapk"),
+                "style", "AppTheme"
+            )
+            if (resourceId!=null) setTheme(resourceId)
         }
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -42,9 +50,9 @@ class MainActivity : AppCompatActivity() {
 
         btnTheme.setOnClickListener {
             if (SPUtils.getString(this, null, "theme") == "dayTheme") {
-                SPUtils.put(this, null, "theme","nightTheme")
+                SPUtils.put(this, null, "theme", "nightTheme")
             } else {
-                SPUtils.put(this, null, "theme","dayTheme")
+                SPUtils.put(this, null, "theme", "dayTheme")
             }
             recreate()
         }
